@@ -15,4 +15,12 @@ export class PrismaService extends PrismaClient {
       },
     });
   }
+
+  cleanDb() {
+    // a transaction is when we tell Prisma, to make sure that the things are done in the specific order.
+    return this.$transaction([
+      this.user.deleteMany(),
+      this.bookmark.deleteMany(),
+    ]);
+  }
 }

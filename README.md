@@ -68,6 +68,8 @@ npx prisma migrate dev --name "initial-migration"
 npx prisma migrate status
 
 npx prisma studio
+
+npx dotenv -e .env.test -- prisma studio
 ```
 
 

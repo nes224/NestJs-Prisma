@@ -22,7 +22,7 @@ describe('App e2e', () => {
     await app.listen(3333);
     prisma = app.get(PrismaService);
     await prisma.cleanDb();
-    pactum.request.setBaseUrl('http://localhost:3333/api');
+    pactum.request.setBaseUrl('http://localhost:3333');
   });
   afterAll(() => {
     app.close();
@@ -92,13 +92,14 @@ describe('App e2e', () => {
         return pactum.spec().post('/auth/signup').expectStatus(400);
       });
 
-      it('should signin', () => {
-        return pactum
+      it('should signin', async () => {
+        return await pactum
           .spec()
           .post('/auth/signin')
+          .withHeaders('Content-type', 'application/json')
           .withBody(dto)
           .expectStatus(200)
-          .stores('userAt', 'access_token');
+          .stores('userAt', 'access_token')
       });
     });
   });
@@ -107,9 +108,11 @@ describe('App e2e', () => {
       it('should get current user', () => {
         return pactum
           .spec()
-          .get('/users/me')
-          .withHeaders('Authorization','Bearer $S{userAt}')
-          .expectStatus(200);
+          .get('/user/me')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .expectStatus(200)
       });
     });
 
